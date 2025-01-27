@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "es2020",  // Or a suitable target
+      "module": "commonjs", // For Cloud Functions
+      "strict": true,      // Enforce stricter type checking\
+      "outDir": "lib",
+      "esModuleInterop": true, // Helps with CommonJS/ESM interop
+      "skipLibCheck": true, // Can speed up compilation
+      "sourceMap": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"]
+    
+  }
+  
