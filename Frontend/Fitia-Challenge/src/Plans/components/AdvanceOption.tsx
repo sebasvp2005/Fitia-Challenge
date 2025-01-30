@@ -32,7 +32,7 @@ export const AdvanceOption = ({item, updateItem, name} : Props): ReactElement =>
         {name: 'Maximizar'}
     ]
 
-    const [option, setOption] = useState(null)
+    const [option, setOption] = useState<{ name: string } | null>(null);
 
     const selectOption = (e: DropdownChangeEvent )=>{
         setOption(e.value)
@@ -52,7 +52,7 @@ export const AdvanceOption = ({item, updateItem, name} : Props): ReactElement =>
         
     }
 
-    const [curPriority, setCurPriority] = useState(null)
+    const [curPriority, setCurPriority] = useState<{ name: string; property: string } | null>(null);
 
     const priorities = [
         { name: 'Bajo', property: 'low' },
@@ -90,7 +90,7 @@ export const AdvanceOption = ({item, updateItem, name} : Props): ReactElement =>
     }
 
     return (
-        <div className="w-[60%]">
+        <div className="w-[60%] max-md:w-[90%]">
             <div className="  flex justify-between items-center">
                 <span>{name}</span>
                 <input type="checkbox" checked={item!=null} onChange={handleCheckboxChange}/>

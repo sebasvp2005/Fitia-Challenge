@@ -78,10 +78,10 @@ export const AdvancedObjectiveStep = ({nextPage}:Props): ReactElement => {
 
                 <AdvanceOption name={'Proteina'} item = {options.proteins} updateItem={updateOption('proteins')}/>
 
-                <div className=" w-[60%] h-[2px] bg-gray-200"/>
+                <div className=" w-[60%] max-md:w-[90%] h-[2px] bg-gray-200"/>
                 <AdvanceOption name={'Carbs'} item = {options.carbs} updateItem={updateOption('carbs')}/>
 
-                <div className=" w-[60%] h-[2px] bg-gray-200"/>
+                <div className=" w-[60%] max-md:w-[90%] h-[2px] bg-gray-200"/>
                 <AdvanceOption name={'Grasas'} item = {options.fats} updateItem={updateOption('fats')}/>
 
                 

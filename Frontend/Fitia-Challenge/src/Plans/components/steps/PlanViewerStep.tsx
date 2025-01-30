@@ -7,11 +7,7 @@ import { Plan } from "../../models/plan";
 import { FoodCard } from "../FoodCard";
 import { LoadingAnimation } from "../../../shared/components/LoadingAnimation";
 
-interface Props{
-    nextPage: () => void;
-}
-
-export const PlanViewerStep = ({nextPage}:Props): ReactElement => {
+export const PlanViewerStep = (): ReactElement => {
     const navigate = useNavigate()
 
     const planConfiguration = usePlanConfigurationStore(e=>e.configuration)
@@ -96,7 +92,7 @@ export const PlanViewerStep = ({nextPage}:Props): ReactElement => {
                     </div>
                 </div>
 
-                <div className="w-[60%]">
+                <div className="w-[60%] max-md:w-[90%]">
                     {
                         
                         plan.planItems.map( (item, index) => (
