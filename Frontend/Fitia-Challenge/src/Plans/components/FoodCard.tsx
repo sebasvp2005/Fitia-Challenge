@@ -10,7 +10,10 @@ export const FoodCard = ({PlanItem} : Props ): ReactElement => {
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center">
-                <img src={PlanItem.food.iconURL} alt="" />
+                <img 
+                src={PlanItem.food.iconURL}
+                className=" w-14 h-14 object-cover rounded-full transition-opacity duration-300"
+                alt="" />
                 <span>{PlanItem.food.name}</span>
             </div>
             <div className="text-right">
