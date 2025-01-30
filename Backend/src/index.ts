@@ -2,8 +2,12 @@ import * as functions from '@google-cloud/functions-framework';
 import { getPlan } from './routes/getPlan';
 import { getFoods } from './routes/getFoods';
 
-functions.http('helloHttp', async (req: functions.Request, res: functions.Response) => {
+functions.http('fitia-challenge-api', async (req: functions.Request, res: functions.Response) => {
+  
   try {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
     // Get the request path
     const path = req.url;
 

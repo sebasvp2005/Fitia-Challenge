@@ -13,11 +13,11 @@ export const getPlan = async (req: functions.Request, res: functions.Response) =
 
 
     const mealType = req.body.mealType || 'breakfast';
-    const nutrientsTarget = req.body.nutrientsTarget || [];
+    const nutrientsTarget = req.body.nutrientsTargets || [];
 
     // Convert nutrientsTarget to match the Nutrient interface
-    const targets = nutrientsTarget.map((target: any) => {
-        const { name, limit } = target;
+    const targets: PlanService.Nutrient[] = nutrientsTarget.map((target: any) => {
+        const { name, limit, strictMode, priority} = target;
 
         if (!nutrientsFilter[name]) {
             throw new Error(`Invalid nutrient name: ${name}`);
@@ -25,7 +25,9 @@ export const getPlan = async (req: functions.Request, res: functions.Response) =
 
         return {
             name: nutrientsFilter[name], 
-            limit: limit
+            limit: limit,
+            strictMode: strictMode,
+            priority: priority
         };
     });
 

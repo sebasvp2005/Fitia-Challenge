@@ -7,16 +7,32 @@ import * as FoodService from './food.service';
 export interface Nutrient {
     name: keyof Food;
     limit: number;
+    strictMode: boolean;
+    priority: string;
 };
+
+function getWeigths( plan : Plan){
+    return plan.planItems.map((planItem) => planItem.serving * planItem.food.servingSize);
+}
 
 export const createPlan = async (mealType:string, nutrientTargets: Nutrient[]) => {
     const foods = await FoodService.getFoodFilterByMealType(mealType);
+    let plan : Plan | null = null
+    let totalDistance = 1e16;
+    for(let i = 0; i < 15; i++) {
+        const basePlan = getBasePlan(foods);
+    
+        const curPlan = calcPlanPortions(basePlan, nutrientTargets);
 
-    const basePlan = getBasePlan(foods);
-    console.log(basePlan);
-
-    const plan = calcPlanPortions(basePlan, nutrientTargets);
-    console.log(plan);
+        if(curPlan == null) {
+            continue;
+        }
+        let curDistance = calculateTotalDistance(nutrientTargets, basePlan, getWeigths(curPlan));
+        if( curDistance < totalDistance) {
+            totalDistance = curDistance
+            plan = curPlan; 
+        }
+    }
 
     return plan;
 };
@@ -24,29 +40,88 @@ export const createPlan = async (mealType:string, nutrientTargets: Nutrient[]) =
 export const getBasePlan = (foods : Food[]) => {
     const foodsByMacrotype =  FoodService.classifyFoodsByMacroType(foods);
     const basePlan : Food[] = [];
-    console.log(foodsByMacrotype);
 
-    // Add protein to the base plan
     basePlan.push(foodsByMacrotype.protein[randomInt(0, foodsByMacrotype.protein.length)]);
 
-    // Add carbs to the base plan
     let carbInd: number = randomInt(0, foodsByMacrotype.carb.length);
     basePlan.push(foodsByMacrotype.carb[carbInd]);
+
     let num = randomInt(0, 2);
-    console.log(num);
     if(num == 1) {
         basePlan.push(foodsByMacrotype.carb[(carbInd + randomInt(1, foodsByMacrotype.carb.length)) % foodsByMacrotype.carb.length]);
     }
 
     num = randomInt(0, 2);
-    console.log(num);
-    // Add fat to the base plan
+
     if(num == 1) {
         basePlan.push(foodsByMacrotype.fat[randomInt(0, foodsByMacrotype.fat.length)]);
     }
 
     return basePlan;
 };
+
+const priorities :Record<string, (x: number) => number> = {
+    "high": (x: number)=>{return x**2},
+    "medium": (x: number)=>{return x},
+    "low": (x: number)=>{return x/2}
+}
+
+const calcDistance = ( x: number, y: number, priority: string) => {
+    return priorities[priority](Math.abs(x - y)) ** 2;
+}
+
+const validateConfiguration = (nutrientTargets: Nutrient[], foods: Food[], weights: number[]) => {
+    for (const {name, limit, strictMode, priority} of nutrientTargets){
+        if(!strictMode)continue;
+        let acum=0
+
+        for (let i = 0; i < weights.length; i++) {
+
+            const nutrientValue = foods[i][name];
+
+            if ( typeof nutrientValue !== 'number') {
+                throw new Error(`Property ${name} is not a number`);
+            }
+
+            acum += nutrientValue * weights[i];
+        }
+        if(foods.length == weights.length && acum < limit * 0.8) {
+            return false;
+        }
+
+        if (acum > limit * 1.2) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const calculateTotalDistance = (nutrientTargets: Nutrient[], foods: Food[], weights: number[]) => {
+    let cur_total_distance = 0;
+    for (const {name, limit, strictMode, priority} of nutrientTargets){
+        if(strictMode)continue;
+        let acum = 0;
+        
+        for (let i = 0; i < weights.length; i++) {
+
+            const nutrientValue = foods[i][name];
+
+            if ( typeof nutrientValue !== 'number') {
+                throw new Error(`Property ${name} is not a number`);
+            }
+
+            acum += nutrientValue * weights[i];
+        }
+
+        let cur_distance = calcDistance(acum, limit, priority);
+        cur_total_distance += cur_distance;
+
+    }
+    cur_total_distance = Math.sqrt(cur_total_distance);
+
+    return cur_total_distance;
+
+}
 
 
 export const calcPlanPortions = (foods : Food[], nutrientTargets: Nutrient[]) : Plan|null => {
@@ -55,52 +130,19 @@ export const calcPlanPortions = (foods : Food[], nutrientTargets: Nutrient[]) : 
 
     let ans : number[] =[];
 
-    let numberSol = 0
+    let min_distance = 1e9;
     const f = (foodIndex: number) => {
-        console.log(foodIndex, weights);
-        for (const {name, limit} of nutrientTargets){
-            let acum = 0;
-
-            for (let i = 0; i < weights.length; i++) {
-
-                const nutrientValue = foods[i][name];
-
-                if ( typeof nutrientValue !== 'number') {
-                    throw new Error(`Property ${name} is not a number`);
-                }
-
-                acum += nutrientValue * weights[i];
-            }
-
-            if(acum > limit * 1.1) return;
-
-        }
+        if(validateConfiguration(nutrientTargets, foods, weights) == false) return;
 
         if (weights.length === foods.length) {
-            for (const {name, limit} of nutrientTargets){
-                let acum = 0;
-    
-                for (let i = 0; i < weights.length; i++) {
-    
-                    const nutrientValue = foods[i][name];
-    
-                    if ( typeof nutrientValue !== 'number') {
-                        throw new Error(`Property ${name} is not a number`);
-                    }
-    
-                    acum += nutrientValue * weights[i];
-                }
-    
-                if(acum < limit * 0.8) {
-                    console.log('No cumplio con el limite', name, acum, limit);   
-                    return;
-                }
-    
+
+            let totalDistance = calculateTotalDistance(nutrientTargets, foods, weights);
+            
+            if( totalDistance < min_distance) {
+                ans = [...weights];
+                min_distance = totalDistance;
             }
 
-            ans = [...weights];
-            console.log(weights);
-            numberSol++;
             return;
         }
 
@@ -110,24 +152,24 @@ export const calcPlanPortions = (foods : Food[], nutrientTargets: Nutrient[]) : 
             weights.pop();
         }
     };
+
     f(0);
 
 
-    console.log(numberSol);
 
     if(ans.length) {
         const planItems: PlanItem[] = foods.map((food, index) => {
             return {
                 food: food,
-                serving: ans[index] / food.servingSize
+                serving: parseFloat((ans[index] / food.servingSize).toFixed(2))
             };
         });
 
         const plan : Plan = {
-            kcal: planItems.reduce((acc, planItem) => acc + planItem.food.caloriesPerGram * planItem.serving  * planItem.food.servingSize, 0),
-            protein: planItems.reduce((acc, planItem) => acc + planItem.food.proteinPerGram * planItem.serving * planItem.food.servingSize, 0),
-            carbs: planItems.reduce((acc, planItem) => acc + planItem.food.carbsPerGram * planItem.serving * planItem.food.servingSize, 0),
-            fat: planItems.reduce((acc, planItem) => acc + planItem.food.fatPerGram * planItem.serving * planItem.food.servingSize, 0),
+            kcal: parseFloat(planItems.reduce((acc, planItem) => acc + planItem.food.caloriesPerGram * planItem.serving  * planItem.food.servingSize, 0).toFixed(2)),
+            protein: parseFloat(planItems.reduce((acc, planItem) => acc + planItem.food.proteinPerGram * planItem.serving * planItem.food.servingSize, 0).toFixed(2)),
+            carbs: parseFloat(planItems.reduce((acc, planItem) => acc + planItem.food.carbsPerGram * planItem.serving * planItem.food.servingSize, 0).toFixed(2)),
+            fat: parseFloat(planItems.reduce((acc, planItem) => acc + planItem.food.fatPerGram * planItem.serving * planItem.food.servingSize, 0).toFixed(2)),
             planItems: planItems
         };
 

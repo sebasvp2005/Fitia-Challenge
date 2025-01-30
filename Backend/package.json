@@ -1,5 +1,5 @@
 {
-    "name": "nodejs-cloud-code-samples-functions-hello-world",
+    "name": "fitia-challenge-api",
     "version": "0.0.1",
     "private": true,
     "license": "Apache-2.0",
@@ -10,8 +10,8 @@
         "axios": "^1.7.9"
     },
     "scripts": {
-        "start": "npx tsc && functions-framework --target=helloHttp",
-        "serve" :"functions-framework --target=src/helloHttp"
+        "build": "npx tsc",
+        "start": "npx tsc && functions-framework --target=fitia-challenge-api"
     },
     "devDependencies": {
         "@types/axios": "^0.14.4",

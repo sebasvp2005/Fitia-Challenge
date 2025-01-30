@@ -5,8 +5,7 @@
       "strict": true,      // Enforce stricter type checking\
       "outDir": "lib",
       "esModuleInterop": true, // Helps with CommonJS/ESM interop
-      "skipLibCheck": true, // Can speed up compilation
-      "sourceMap": true
+      "skipLibCheck": true // Can speed up compilation
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules"]
