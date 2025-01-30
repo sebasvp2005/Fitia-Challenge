@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import { useState } from "react";
-import { MealSelection } from "../steps/MealSelection";
-import { PlanViewerStep } from "../steps/PlanViewerStep";
-import { AdvancedObjectiveStep } from "../steps/AdvancedObjectivesStep";
+import { MealSelection } from "../components/steps/MealSelection";
+import { PlanViewerStep } from "../components/steps/PlanViewerStep";
+import { AdvancedObjectiveStep } from "../components/steps/AdvancedObjectivesStep";
 
 
 const steps = [

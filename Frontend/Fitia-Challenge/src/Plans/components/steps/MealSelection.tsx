@@ -1,7 +1,7 @@
 import { ReactElement, useState } from "react";
-import { BasicLayout } from "../layouts/BasicLayout";
-import { CustomButton } from "../../shared/components/CustomButton";
-import { usePlanConfigurationStore } from "../stores/plan.store";
+import { BasicLayout } from "../../layouts/BasicLayout";
+import { CustomButton } from "../../../shared/components/CustomButton";
+import { usePlanConfigurationStore } from "../../stores/plan.store";
 
 
 const options = [

@@ -1,11 +1,11 @@
 import { ReactElement, useEffect, useState } from "react";
-import { BasicLayout } from "../layouts/BasicLayout";
+import { BasicLayout } from "../../layouts/BasicLayout";
 import { useNavigate } from "react-router-dom";
-import { usePlanConfigurationStore } from "../stores/plan.store";
+import { usePlanConfigurationStore } from "../../stores/plan.store";
 import axios from "axios";
-import { Plan } from "../models/plan";
-import { FoodCard } from "../components/FoodCard";
-import { LoadingAnimation } from "../../shared/components/LoadingAnimation";
+import { Plan } from "../../models/plan";
+import { FoodCard } from "../FoodCard";
+import { LoadingAnimation } from "../../../shared/components/LoadingAnimation";
 
 interface Props{
     nextPage: () => void;

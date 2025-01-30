@@ -1,9 +1,9 @@
 import { ReactElement,  useState } from "react";
-import { BasicLayout } from "../layouts/BasicLayout";
-import { nutrientTarget } from "../models/planConfiguration";
-import { usePlanConfigurationStore } from "../stores/plan.store";
-import { AdvanceOption } from "../components/AdvanceOption";
-import { Nutrient, NutrientOptions } from "../models/planConfiguration";
+import { BasicLayout } from "../../layouts/BasicLayout";
+import { nutrientTarget } from "../../models/planConfiguration";
+import { usePlanConfigurationStore } from "../../stores/plan.store";
+import { AdvanceOption } from "../AdvanceOption";
+import { Nutrient, NutrientOptions } from "../../models/planConfiguration";
 
 
 interface Props{
